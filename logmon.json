@@ -1,0 +1,8 @@
+[
+  {
+    "target"  : "/var/log/messages",
+    "message" : "error|ERROR",
+    "host"    :  "hoge.host",
+    "action"  :  "/opt/ibm/director/agent/runtime/agent/bin/agentcli.sh coreagent genevent /compcat:\"Director.LogMonitor.Error\" /comptype:\"Messages\" /sev:1 /text:\"/var/log/messagesにエラー「error|ERROR」が記録されました。\""
+  }
+]
