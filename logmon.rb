@@ -14,7 +14,6 @@ class Logmon
 
   def intialize 
     @conf_file = '/etc/logmon/logmon.conf'
-    @config = ''
     @terminate = false
   end    
 
@@ -40,6 +39,7 @@ EOF
   end
 
   def read_conf(check_config)
+    config = {}
     open(@conf_file) do |file|
       target  = nil
       message = nil
@@ -51,31 +51,32 @@ EOF
         if ( line =~ /^(\(.+\))$/ ) { message = $1; next }
         action  = line;
         next unless ( target && message );
-        @config[target] = {message => action}
-        
+        config[target] = {message => action}
       end
     end
 
-    return unless check_config
+    return config unless check_config
 
     puts "Config file: #{@conf_file}"
-    @config.keys.each do |target|
+    config.keys.each do |target|
       puts "Logfile: #{target}";
-      @config[target].keys.each do |message|
+      config[target].keys.each do |message|
         puts "  Message: #{message}"
-        @config[target][message].each do |action|
+        config[target][message].each do |action|
           puts "    Action: #{action}"
         end
       end
     end
+
+    config
   end
 
-  def watch_for(target, tail_num)
+  def watch_for(config, target, tail_num)
     fork do
       `tail -n#{tail_num} -f #{target}`.each_line do |line|
         @config[target].keys.each do |message| 
           if ( line =~ m/message/ ) then
-            @config[target][message].each do |action|
+            config[target][message].each do |action|
               new_action = action
               new_action = new_action.sub(/<%%%%>/, $1)
               system( new_action )
@@ -93,12 +94,12 @@ EOF
       terminate = true
     }
 
-    read_conf(options)
+    config = read_conf(options)
 
     tail_num = 0
     while ( ! terminate ) do
       config.keys.each do |target|
-        watch_for(target, tail_num)
+        watch_for(config, target, tail_num)
       end
       while ( ! system( "pgrep -P $$" ) ) do
         Process.waitall
