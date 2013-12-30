@@ -33,8 +33,8 @@ EOF
   end
 
   def read_conf(check_config)
-    open(@conf_file) do |io|
-      config = JSON.load(io)
+    config = open(@conf_file) do |io|
+      JSON.load(io)
     end
 
     return config unless check_config
