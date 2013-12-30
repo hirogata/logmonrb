@@ -51,9 +51,9 @@ EOF
 
   def watch_for(target, tail_num)
     fork do
-      `tail -n#{tail_num} -f #{target["target"]}`.each_line do |line|
-        if ( line =~ m/target["message"]/ ) then
-          new_action = target["action"]
+      `tail -n#{tail_num} -f #{target['target']}`.each_line do |line|
+        if line =~ /#{target['message']}/ then
+          new_action = target['action']
           new_action = new_action.sub(/<%%%%>/, $1)
           system( new_action )
         end
