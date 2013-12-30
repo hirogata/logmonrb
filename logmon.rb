@@ -52,7 +52,7 @@ EOF
       puts "  Action: #{hash["action"]}"
     end
 
-    config
+    exit
   end
 
   def watch_for(target, tail_num)
@@ -65,7 +65,7 @@ EOF
         end
       end
     end
-  end
+  end 
 
   def run
     trap('HUP') { system("pkill -HUP -P $$") }
@@ -85,7 +85,7 @@ EOF
       while ( ! system( "pgrep -P $$" ) ) do
         Process.waitall
       end
-        tail_num = 5;
+      tail_num = 5;
     end
   end
 end
