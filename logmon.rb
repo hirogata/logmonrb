@@ -22,6 +22,7 @@ Options:
   -c: check config
   -f: config file (Default: /etc/logmon/logmon.conf)
 EOF
+      exit
     end
     opt_c = false
     opt.on('-c') {|v| opt_c = v if v}
