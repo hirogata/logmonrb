@@ -2,6 +2,7 @@
 
 require 'json'
 require 'optparse'
+require 'pry'
 
 class Logmon
 
@@ -51,11 +52,15 @@ EOF
 
   def watch_for(target, tail_num)
     fork do
-      `tail -n#{tail_num} -f #{target['target']}`.each_line do |line|
+      f = open("|tail -n0 -f #{target['target']}")
+      while true
+        line = f.gets
         if line =~ /#{target['message']}/ then
           new_action = target['action']
-          new_action = new_action.sub(/<%%%%>/, $1)
+          new_action = new_action.sub(/<%%%%>/, line)
           system( new_action )
+        else
+          sleep 1
         end
       end
     end
