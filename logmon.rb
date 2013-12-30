@@ -1,11 +1,4 @@
-#!/usr/bin/perl
-#
-#   logmon.pl / LogMonitor
-#
-#   2009/06/26  ver1.0
-#   2009/06/30  ver1.1 Add meta-string: <%%%%>
-#   2010/04/11  ver1.2 resolve meta-string substitution bug
-#
+#!/usr/bin/env ruby
 
 require 'json'
 require 'optparse'
