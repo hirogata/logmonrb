@@ -66,13 +66,13 @@ EOF
 
     trap('TERM') {
       system ( "pkill -TERM -P $$" )
-      terminate = true
+      @terminate = true
     }
 
     config = read_conf(options)
 
     tail_num = 0
-    while ( ! terminate ) do
+    while ( ! @terminate ) do
       config.each do |target|
         watch_for(target, tail_num)
       end
