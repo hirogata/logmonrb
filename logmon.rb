@@ -2,6 +2,7 @@
 
 require 'json'
 require 'optparse'
+require 'net/ssh'
 require 'pry'
 
 class Logmon
@@ -52,16 +53,19 @@ EOF
 
   def watch_for(target, tail_num)
     fork do
-      f = open("|tail -n0 -f #{target['target']}")
-      while true
-        line = f.gets
-        if line =~ /#{target['message']}/ then
-          new_action = target['action']
-          new_action = new_action.sub(/<%%%%>/, line)
-          system( new_action )
-        else
-          sleep 1
+      ssh_config = Net::SSH::Config.for(target['host'], Net::SSH::Config.default_files)
+      Net::SSH.start(target['host'], ssh_config[:user], ssh_config) do |session|
+        session.open_channel do |channel|
+          channel.on_data do |ch, data|
+            if data =~ /#{target['message']}/ then
+              new_action = target['action']
+              new_action = new_action.sub(/<%%%%>/, data)
+              system( new_action )
+            end
+          end
+          channel.exec "tail -n0 -f #{target['target']}"
         end
+        session.loop
       end
     end
   end 
