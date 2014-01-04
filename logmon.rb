@@ -43,7 +43,7 @@ EOF
 
     puts "Config file: #{@conf_file}"
     config.each do |hash|
-      puts "Logfile: #{hash["target"]}";
+      puts "Logfile: #{hash["file"]}";
       puts "  Message: #{hash["message"]}"
       puts "  Action: #{hash["action"]}"
     end
@@ -63,7 +63,7 @@ EOF
               system( new_action )
             end
           end
-          channel.exec "tail -n0 -f #{target['target']}"
+          channel.exec "tail -n0 -f #{target['file']}"
         end
         session.loop
       end
