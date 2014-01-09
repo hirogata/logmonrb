@@ -51,7 +51,7 @@ EOF
     exit
   end
 
-  def watch_for(target, tail_num)
+  def watch_for(target)
     fork do
       ssh_config = Net::SSH::Config.for(target['host'], Net::SSH::Config.default_files)
       Net::SSH.start(target['host'], ssh_config[:user], ssh_config) do |session|
@@ -80,13 +80,11 @@ EOF
 
     config = read_conf(options)
 
-    tail_num = 0
     while ( ! @terminate ) do
       config.each do |target|
         watch_for(target, tail_num)
       end
       Process.waitall
-      tail_num = 5;
     end
   end
 end
