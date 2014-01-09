@@ -74,7 +74,7 @@ EOF
     trap('HUP') { system("pkill -HUP -P $$") }
 
     trap('TERM') {
-      system ( "pkill -TERM -P $$" )
+      system ( "pkill -KILL -P #{$$}" )
       @terminate = true
     }
 
@@ -85,9 +85,7 @@ EOF
       config.each do |target|
         watch_for(target, tail_num)
       end
-      while ( ! system( "pgrep -P $$" ) ) do
-        Process.waitall
-      end
+      Process.waitall
       tail_num = 5;
     end
   end
