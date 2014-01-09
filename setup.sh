@@ -1,14 +1,14 @@
 #!/bin/sh -x
 
-mkdir -p /etc/logmon
-cp ./logmon.rb /etc/logmon/
-cp ./logmon.conf /etc/logmon/
-cp ./logmon /etc/init.d/logmon
+mkdir -p /etc/logmonrb
+cp ./logmon.rb /etc/logmonrb/
+cp ./logmon.json /etc/logmonrb/
+cp ./logmonrb /etc/init.d/
 
-chmod 700 /etc/init.d/logmon
-chmod 700 /etc/logmon/logmon.rb
-chmod 600 /etc/logmon/logmon.conf
+chmod 700 /etc/init.d/logmonrb
+chmod 700 /etc/logmonrb/logmon.rb
+chmod 600 /etc/logmonrb/logmon.json
 
-chkconfig --add logmon
-chkconfig --level 345 logmon on
+chkconfig --add logmonrb
+chkconfig --level 345 logmonrb on
 
