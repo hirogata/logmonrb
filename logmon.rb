@@ -82,7 +82,7 @@ EOF
 
     while ( ! @terminate ) do
       config.each do |target|
-        watch_for(target, tail_num)
+        watch_for(target)
       end
       Process.waitall
     end
