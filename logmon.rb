@@ -55,16 +55,22 @@ EOF
     fork do
       ssh_config = Net::SSH::Config.for(target['host'], Net::SSH::Config.default_files)
       Net::SSH.start(target['host'], ssh_config[:user], ssh_config) do |session|
-        session.open_channel do |channel|
-          channel.on_data do |ch, data|
-            if data =~ /#{target['message']}/ then
-              new_action = target['action']
-              new_action = new_action.sub(/<%%%%>/, data)
-              system( new_action )
+        do_channel = Proc.new do |channel|
+          channel.exec "tail -n0 -f #{target['file']}" do |ch, success|
+            ch.on_data do |ch, data|
+              if data =~ /#{target['message']}/ then
+                new_action = target['action']
+                new_action = new_action.sub(/<%%%%>/, data)
+                system( new_action )
+              end
+            end
+            ch.on_close do
+              puts "retry: target['host']"
+              session.open_channel &do_channel
             end
           end
-          channel.exec "tail -n0 -f #{target['file']}"
         end
+        session.open_channel &do_channel
         session.loop
       end
     end
